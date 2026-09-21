@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spendly — Expense Tracker</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #09090b;
+            --card: #111113;
+            --card-light: #17171a;
+            --border: #242428;
+            --text: #f5f5f5;
+            --muted: #8b8b93;
+            --green: #7cffb2;
+            --red: #ff6b7a;
+            --purple: #9b87ff;
+        }
+
+        body {
+            font-family: Inter, Arial, sans-serif;
+            background:
+                radial-gradient(circle at 80% 0%, rgba(124, 255, 178, 0.08), transparent 25%),
+                radial-gradient(circle at 0% 30%, rgba(155, 135, 255, 0.07), transparent 25%),
+                var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        /* ---------------- NAVBAR ---------------- */
+
+        nav {
+            height: 72px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 6%;
+            backdrop-filter: blur(15px);
+            position: sticky;
+            top: 0;
+            background: rgba(9, 9, 11, 0.8);
+            z-index: 10;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .logo span {
+            color: var(--green);
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .date {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--green), var(--purple));
+            display: grid;
+            place-items: center;
+            color: #09090b;
+            font-weight: 800;
+        }
+
+        /* ---------------- MAIN ---------------- */
+
+        main {
+            width: min(1200px, 90%);
+            margin: 45px auto;
+        }
+
+        .welcome {
+            margin-bottom: 30px;
+        }
+
+        .welcome p {
+            color: var(--muted);
+            margin-top: 7px;
+            font-size: 14px;
+        }
+
+        .welcome h1 {
+            font-size: clamp(28px, 4vw, 42px);
+            letter-spacing: -2px;
+        }
+
+        /* ---------------- BALANCE ---------------- */
+
+        .balance-card {
+            background:
+                linear-gradient(135deg, rgba(124, 255, 178, 0.12), transparent 50%),
+                var(--card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 18px;
+        }
+
+        .balance-card::after {
+            content: "";
+            position: absolute;
+            width: 220px;
+            height: 220px;
+            border-radius: 50%;
+            background: rgba(124, 255, 178, 0.08);
+            filter: blur(50px);
+            right: -70px;
+            top: -90px;
+        }
+
+        .balance-label {
+            color: var(--muted);
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
+
+        .balance {
+            font-size: clamp(36px, 6vw, 58px);
+            font-weight: 800;
+            letter-spacing: -3px;
+        }
+
+        .balance-change {
+            margin-top: 12px;
+            font-size: 13px;
+            color: var(--green);
+        }
+
+        /* ---------------- STATS ---------------- */
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+            margin-bottom: 30px;
+        }
+
+        .stat {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 22px;
+        }
+
+        .stat-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+
+        .stat-title {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .stat-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            display: grid;
+            place-items: center;
+            background: var(--card-light);
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .income {
+            color: var(--green);
+        }
+
+        .expense {
+            color: var(--red);
+        }
+
+        /* ---------------- CONTENT ---------------- */
+
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 360px;
+            gap: 20px;
+        }
+
+        .panel {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 22px;
+            padding: 24px;
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 22px;
+        }
+
+        .panel-header h2 {
+            font-size: 18px;
+        }
+
+        /* ---------------- TRANSACTIONS ---------------- */
+
+        .search {
+            width: 220px;
+            background: var(--card-light);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px 13px;
+            color: white;
+            outline: none;
+        }
+
+        .search:focus {
+            border-color: #44444b;
+        }
+
+        .transaction {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .transaction:last-child {
+            border-bottom: none;
+        }
+
+        .transaction-left {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+        }
+
+        .transaction-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 13px;
+            background: var(--card-light);
+            display: grid;
+            place-items: center;
+            font-size: 18px;
+        }
+
+        .transaction-name {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .transaction-category {
+            color: var(--muted);
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
+        .transaction-amount {
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .transaction-date {
+            color: var(--muted);
+            font-size: 11px;
+            text-align: right;
+            margin-top: 4px;
+        }
+
+        /* ---------------- ADD EXPENSE ---------------- */
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            color: var(--muted);
+            font-size: 12px;
+            margin-bottom: 7px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 13px;
+            border-radius: 11px;
+            border: 1px solid var(--border);
+            background: var(--card-light);
+            color: white;
+            outline: none;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: var(--green);
+        }
+
+        .amount-input {
+            font-size: 20px !important;
+            font-weight: 700;
+        }
+
+        .type-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .type-buttons button {
+            padding: 11px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: var(--card-light);
+            color: var(--muted);
+            cursor: pointer;
+        }
+
+        .type-buttons .active-expense {
+            border-color: var(--red);
+            color: var(--red);
+        }
+
+        .type-buttons .active-income {
+            border-color: var(--green);
+            color: var(--green);
+        }
+
+        .add-btn {
+            width: 100%;
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            background: var(--green);
+            color: #080808;
+            font-weight: 800;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .add-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(124, 255, 178, 0.15);
+        }
+
+        /* ---------------- BUDGET ---------------- */
+
+        .budget {
+            margin-top: 20px;
+        }
+
+        .budget-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
+
+        .budget-header span:last-child {
+            color: var(--muted);
+        }
+
+        .progress {
+            height: 7px;
+            border-radius: 10px;
+            background: #252529;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 63%;
+            background: var(--green);
+            border-radius: inherit;
+        }
+
+        /* ---------------- RESPONSIVE ---------------- */
+
+        @media (max-width: 850px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 650px) {
+            nav {
+                padding: 0 5%;
+            }
+
+            .date {
+                display: none;
+            }
+
+            main {
+                width: 92%;
+                margin: 30px auto;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .panel-header {
+                align-items: flex-start;
+                gap: 12px;
+                flex-direction: column;
+            }
+
+            .search {
+                width: 100%;
+            }
+
+            .balance-card {
+                padding: 24px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+
+    <nav>
+        <div class="logo">
+            Spend<span>ly.</span>
+        </div>
+
+        <div class="nav-right">
+            <div class="date">Monday, September 21</div>
+            <div class="avatar">J</div>
+        </div>
+    </nav>
+
+
+    <main>
+
+        <!-- WELCOME -->
+
+        <div class="welcome">
+            <h1>Financial overview</h1>
+            <p>Track your money. Stay in control.</p>
+        </div>
+
+
+        <!-- BALANCE -->
+
+        <section class="balance-card">
+            <div class="balance-label">CURRENT BALANCE</div>
+
+            <div class="balance">
+                GH₵ 2,840.50
+            </div>
+
+            <div class="balance-change">
+                ↑ 12.4% from last month
+            </div>
+        </section>
+
+
+        <!-- STATS -->
+
+        <section class="stats">
+
+            <div class="stat">
+                <div class="stat-top">
+                    <div class="stat-title">TOTAL INCOME</div>
+                    <div class="stat-icon">↗</div>
+                </div>
+
+                <div class="stat-value income">
+                    GH₵ 4,250
+                </div>
+            </div>
+
+
+            <div class="stat">
+                <div class="stat-top">
+                    <div class="stat-title">TOTAL EXPENSES</div>
+                    <div class="stat-icon">↘</div>
+                </div>
+
+                <div class="stat-value expense">
+                    GH₵ 1,409.50
+                </div>
+            </div>
+
+
+            <div class="stat">
+                <div class="stat-top">
+                    <div class="stat-title">TRANSACTIONS</div>
+                    <div class="stat-icon">#</div>
+                </div>
+
+                <div class="stat-value">
+                    24
+                </div>
+            </div>
+
+        </section>
+
+
+        <!-- MAIN CONTENT -->
+
+        <section class="content">
+
+            <!-- TRANSACTIONS -->
+
+            <div class="panel">
+
+                <div class="panel-header">
+                    <h2>Recent transactions</h2>
+
+                    <input
+                        id="searchInput"
+                        class="search"
+                        type="text"
+                        placeholder="Search transactions..."
+                    >
+                </div>
+
+
+                <div id="container">
+
+                    <div class="transaction">
+
+                        <div class="transaction-left">
+
+                            <div class="transaction-icon">
+                                🍔
+                            </div>
+
+                            <div>
+                                <div class="transaction-name">
+                                    Lunch
+                                </div>
+
+                                <div class="transaction-category">
+                                    Food
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div>
+                            <div class="transaction-amount expense">
+                                - GH₵ 25.00
+                            </div>
+
+                            <div class="transaction-date">
+                                Today
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                    <div class="transaction">
+
+                        <div class="transaction-left">
+
+                            <div class="transaction-icon">
+                                🚕
+                            </div>
+
+                            <div>
+                                <div class="transaction-name">
+                                    Uber
+                                </div>
+
+                                <div class="transaction-category">
+                                    Transport
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div>
+                            <div class="transaction-amount expense">
+                                - GH₵ 42.00
+                            </div>
+
+                            <div class="transaction-date">
+                                Yesterday
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                    <div class="transaction">
+
+                        <div class="transaction-left">
+
+                            <div class="transaction-icon">
+                                💻
+                            </div>
+
+                            <div>
+                                <div class="transaction-name">
+                                    Freelance project
+                                </div>
+
+                                <div class="transaction-category">
+                                    Income
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div>
+                            <div class="transaction-amount income">
+                                + GH₵ 500.00
+                            </div>
+
+                            <div class="transaction-date">
+                                Sep 19
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                    <div class="transaction">
+
+                        <div class="transaction-left">
+
+                            <div class="transaction-icon">
+                                🎮
+                            </div>
+
+                            <div>
+                                <div class="transaction-name">
+                                    Game purchase
+                                </div>
+
+                                <div class="transaction-category">
+                                    Entertainment
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div>
+                            <div class="transaction-amount expense">
+                                - GH₵ 80.00
+                            </div>
+
+                            <div class="transaction-date">
+                                Sep 18
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ADD TRANSACTION -->
+
+            <div>
+
+                <div class="panel">
+
+                    <div class="panel-header">
+                        <h2>Add transaction</h2>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label>DESCRIPTION</label>
+
+                        <input
+                            id="description"
+                            type="text"
+                            placeholder="e.g. Bought lunch"
+                        >
+                    </div>
+
+
+                    <div class="form-group">
+                        <label>AMOUNT</label>
+
+                        <input
+                            id="amount"
+                            class="amount-input"
+                            type="number"
+                            placeholder="0.00"
+                        >
+                    </div>
+
+
+                    <div class="form-group">
+                        <label>CATEGORY</label>
+
+                        <select id="category">
+                            <option value="">Select category</option>
+                            <option>Food</option>
+                            <option>Transport</option>
+                            <option>Entertainment</option>
+                            <option>Shopping</option>
+                            <option>Bills</option>
+                            <option>Education</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label>TYPE</label>
+
+                        <div class="type-buttons">
+
+                            <button class="active-expense">
+                                Expense
+                            </button>
+
+                            <button>
+                                Income
+                            </button>
+
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label>DATE</label>
+
+                        <input
+                            id="date"
+                            type="date"
+                        >
+                    </div>
+
+
+                    <button id="addBtn" class="add-btn">
+                        + Add transaction
+                    </button>
+
+                </div>
+
+
+                <!-- BUDGET -->
+
+                <div class="panel budget">
+
+                    <div class="budget-header">
+                        <span>Monthly budget</span>
+                        <span>GH₵ 1,575 / GH₵ 2,500</span>
+                    </div>
+
+                    <div class="progress">
+                        <div class="progress-bar"></div>
+                    </div>
+
+                    <p style="
+                        color: var(--muted);
+                        font-size: 11px;
+                        margin-top: 10px;
+                    ">
+                        GH₵ 925 remaining this month
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</body>
+</html>
