@@ -18,13 +18,28 @@ addBtn.addEventListener('click', () => {
     dateInput: dateInput.value
    } 
 
-   
-function addExpense() {
-      transactions.push(newTransaction)
-      console.log(transactions)
-}
+
+        if(editingId) {
+            transactions = transactions.map(transaction => {
+            if (transaction.id === editingId) {
+                return newTransaction;
+            }
+            return transaction;
+        });
+
+        editingId = null; 
+    }else {
+           transactions.push(newTransaction)
+    }
+
+
     addExpense();
     displayTransaction(transactions)
+       descriptionInput.value = '';
+       amountInput.value = '';
+       categoryInput.value = '';
+       dateInput.value = '';
+
 })
 
 function displayTransaction(transactionArray) {
@@ -72,5 +87,14 @@ container.addEventListener('click' ,(event) => {
         transactions = transactions.filter(transaction => transaction.id !== id);
         displayTransaction(transactions);      
     }
+    
+      if(event.target.classList.contains('edit-btn')) {
+              const transaction = transactions.find(t => t.id === id);
+               descriptionInput.value = transaction.descriptionInput;
+               amountInput.value = transaction.amountInput;
+               categoryInput.value = transaction.categoryInput;
+               dateInput.value = transaction.dateInput;
 
+               editingId = id
+    }
 })
