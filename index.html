@@ -239,6 +239,39 @@
         .search:focus {
             border-color: #44444b;
         }
+        .transaction-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.edit-btn,
+.delete-btn {
+    border: none;
+    padding: 7px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.edit-btn {
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+}
+
+.edit-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.delete-btn {
+    background: rgba(255, 70, 70, 0.1);
+    color: #ff6b6b;
+}
+
+.delete-btn:hover {
+    background: rgba(255, 70, 70, 0.18);
+} 
 
         .transaction {
             display: flex;
@@ -546,136 +579,7 @@
 
                 <div id="container">
 
-                    <div class="transaction">
-
-                        <div class="transaction-left">
-
-                            <div class="transaction-icon">
-                                🍔
-                            </div>
-
-                            <div>
-                                <div class="transaction-name">
-                                    Lunch
-                                </div>
-
-                                <div class="transaction-category">
-                                    Food
-                                </div>
-                            </div>
-
-                        </div>
-
-                        <div>
-                            <div class="transaction-amount expense">
-                                - GH₵ 25.00
-                            </div>
-
-                            <div class="transaction-date">
-                                Today
-                            </div>
-                        </div>
-
-                    </div>
-
-
-                    <div class="transaction">
-
-                        <div class="transaction-left">
-
-                            <div class="transaction-icon">
-                                🚕
-                            </div>
-
-                            <div>
-                                <div class="transaction-name">
-                                    Uber
-                                </div>
-
-                                <div class="transaction-category">
-                                    Transport
-                                </div>
-                            </div>
-
-                        </div>
-
-                        <div>
-                            <div class="transaction-amount expense">
-                                - GH₵ 42.00
-                            </div>
-
-                            <div class="transaction-date">
-                                Yesterday
-                            </div>
-                        </div>
-
-                    </div>
-
-
-                    <div class="transaction">
-
-                        <div class="transaction-left">
-
-                            <div class="transaction-icon">
-                                💻
-                            </div>
-
-                            <div>
-                                <div class="transaction-name">
-                                    Freelance project
-                                </div>
-
-                                <div class="transaction-category">
-                                    Income
-                                </div>
-                            </div>
-
-                        </div>
-
-                        <div>
-                            <div class="transaction-amount income">
-                                + GH₵ 500.00
-                            </div>
-
-                            <div class="transaction-date">
-                                Sep 19
-                            </div>
-                        </div>
-
-                    </div>
-
-
-                    <div class="transaction">
-
-                        <div class="transaction-left">
-
-                            <div class="transaction-icon">
-                                🎮
-                            </div>
-
-                            <div>
-                                <div class="transaction-name">
-                                    Game purchase
-                                </div>
-
-                                <div class="transaction-category">
-                                    Entertainment
-                                </div>
-                            </div>
-
-                        </div>
-
-                        <div>
-                            <div class="transaction-amount expense">
-                                - GH₵ 80.00
-                            </div>
-
-                            <div class="transaction-date">
-                                Sep 18
-                            </div>
-                        </div>
-
-                    </div>
+                
 
                 </div>
 
@@ -794,6 +698,6 @@
         </section>
 
     </main>
-
+   <script src="index.js"></script>
 </body>
 </html>
