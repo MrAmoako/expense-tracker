@@ -11,8 +11,9 @@ const addBtn = document.getElementById("addBtn");
 const container = document.getElementById("container");
 const price = document.getElementById("price");
 const balance = document.getElementById("balance");
-const income = document.getElementById("income");
-const expense = document.getElementById("expense");
+const incomefield = document.getElementById("income");
+const expensefield = document.getElementById("expense");
+
 
 addBtn.addEventListener("click", () => {
   const newTransaction = {
@@ -39,6 +40,7 @@ addBtn.addEventListener("click", () => {
 
   
   displayTransaction(transactions);
+  updateStats();
   descriptionInput.value = "";
   amountInput.value = "";
   categoryInput.value = "";
@@ -124,7 +126,7 @@ incomeBtn.addEventListener('click', () => {
 
 })
 
-function UpdateStats() {
+function updateStats() {
   const income = transactions.filter((transaction) => {
     return transaction.type === 'income';
   })
@@ -133,11 +135,17 @@ function UpdateStats() {
   })
 
   const totalIncome = income.reduce((total, transaction) => {
-    return total + transaction.amount;
+    return total + transaction.amountInput;
   }, 0)
 
    const totalExpense = expense.reduce((total, transaction) => {
-    return total + transaction.amount;
+    return total + transaction.amountInput;
   }, 0)
+
+  const totalBalance = totalIncome - totalExpense;
+
+   incomefield.textContent = `+GHC ${totalIncome}`;
+   expensefield.textContent = `-GHC ${totalExpense}`;
+   balance.textContent = `GHC ${totalBalance}`;
   
 }
