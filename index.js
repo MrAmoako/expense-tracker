@@ -123,10 +123,18 @@ incomeBtn.addEventListener('click', () => {
 
 function UpdateStats() {
   const income = transactions.filter((transaction) => {
-    return transaction.type === 'income'
+    return transaction.type === 'income';
   })
   const expense = transactions.filter((transaction) => {
-    return transaction.type === 'expense'
+    return transaction.type === 'expense';
   })
+
+  const totalIncome = income.reduce((total, transaction) => {
+    return total + transaction.amount;
+  }, 0)
+
+   const totalExpense = expense.reduce((total, transaction) => {
+    return total + transaction.amount;
+  }, 0)
   
 }
