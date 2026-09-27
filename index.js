@@ -1,6 +1,7 @@
-let transactions = [];
+let transactions = JSON.parse(localStorage.getItem("transactions")) || [];
 let editingId = null;
 let selectedType = "expense";
+
 const expenseBtn = document.getElementById("expenseBtn");
 const incomeBtn = document.getElementById("incomeBtn");
 const descriptionInput = document.getElementById("description");
@@ -13,6 +14,12 @@ const price = document.getElementById("price");
 const balance = document.getElementById("balance");
 const incomefield = document.getElementById("income");
 const expensefield = document.getElementById("expense");
+const numTransactions = document.getElementById("numTransactions");
+
+
+function saveTransactions() {
+  localStorage.setItem("transactions", JSON.stringify(transactions));
+}
 
 
 addBtn.addEventListener("click", () => {
@@ -38,9 +45,11 @@ addBtn.addEventListener("click", () => {
     transactions.push(newTransaction);
   }
 
-  
+  saveTransactions();
+
   displayTransaction(transactions);
   updateStats();
+
   descriptionInput.value = "";
   amountInput.value = "";
   categoryInput.value = "";
@@ -48,104 +57,124 @@ addBtn.addEventListener("click", () => {
 });
 
 
-
-
 function displayTransaction(transactionArray) {
   container.innerHTML = transactionArray
     .map((transaction) => {
-        const sign = transaction.type === "expense" ? "-" : "+";
-        const priceClass = transaction.type === "expense"
-    ? "expense"
-    : "income";
+      const sign = transaction.type === "expense" ? "-" : "+";
+      const priceClass = transaction.type === "expense"
+        ? "expense"
+        : "income";
+
       return `
-          <div class="transaction">
-                        <div class="transaction-left">
-                            <div class="transaction-icon">
-                                🍔
-                            </div>
-                            <div>
-                                <div class="transaction-name">
-                                    ${transaction.descriptionInput}
-                                </div>
-                                <div class="transaction-category">
-                                      ${transaction.categoryInput}
-                                </div>
-                            </div>
+        <div class="transaction">
+          <div class="transaction-left">
+            <div class="transaction-icon">
+              🍔
+            </div>
 
-                        </div>
-                        <div>
-                            <div class="transaction-amount ${priceClass}" >
-                              ${sign}GHC${transaction.amountInput}
-                            </div>
+            <div>
+              <div class="transaction-name">
+                ${transaction.descriptionInput}
+              </div>
 
-                            <div class="transaction-date">
-                                ${transaction.dateInput}
-                            </div>
-                        </div>
-                        <div class="transaction-actions">
-    <button class="edit-btn" data-id="${transaction.id}">Edit</button>
-    <button class="delete-btn" data-id="${transaction.id}">Delete</button>
-</div>
-                    </div>
-`;
+              <div class="transaction-category">
+                ${transaction.categoryInput}
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="transaction-amount ${priceClass}">
+              ${sign}GHC${transaction.amountInput}
+            </div>
+
+            <div class="transaction-date">
+              ${transaction.dateInput}
+            </div>
+          </div>
+
+          <div class="transaction-actions">
+            <button class="edit-btn" data-id="${transaction.id}">Edit</button>
+            <button class="delete-btn" data-id="${transaction.id}">Delete</button>
+          </div>
+        </div>
+      `;
     })
     .join("");
 }
+
 
 container.addEventListener("click", (event) => {
   const id = Number(event.target.dataset.id);
 
   if (event.target.classList.contains("delete-btn")) {
-    transactions = transactions.filter((transaction) => transaction.id !== id);
+    transactions = transactions.filter(
+      (transaction) => transaction.id !== id
+    );
+
+    saveTransactions();
+
     displayTransaction(transactions);
+    updateStats();
   }
 
   if (event.target.classList.contains("edit-btn")) {
     const transaction = transactions.find((t) => t.id === id);
+
     descriptionInput.value = transaction.descriptionInput;
     amountInput.value = transaction.amountInput;
     categoryInput.value = transaction.categoryInput;
     dateInput.value = transaction.dateInput;
-    
+
+    selectedType = transaction.type;
+
     editingId = id;
   }
 });
 
-expenseBtn.addEventListener('click', () => {
-     selectedType = 'expense';
 
-     expenseBtn.classList.add('active-expense')
-     incomeBtn.classList.remove('active-income')
-})
+expenseBtn.addEventListener("click", () => {
+  selectedType = "expense";
 
-incomeBtn.addEventListener('click', () => {
-  selectedType = 'income'
-  
-  incomeBtn.classList.add('active-income')
-  expenseBtn.classList.remove('active-expense')
+  expenseBtn.classList.add("active-expense");
+  incomeBtn.classList.remove("active-income");
+});
 
-})
+
+incomeBtn.addEventListener("click", () => {
+  selectedType = "income";
+
+  incomeBtn.classList.add("active-income");
+  expenseBtn.classList.remove("active-expense");
+});
+
 
 function updateStats() {
   const income = transactions.filter((transaction) => {
-    return transaction.type === 'income';
-  })
+    return transaction.type === "income";
+  });
+
   const expense = transactions.filter((transaction) => {
-    return transaction.type === 'expense';
-  })
+    return transaction.type === "expense";
+  });
 
   const totalIncome = income.reduce((total, transaction) => {
     return total + transaction.amountInput;
-  }, 0)
+  }, 0);
 
-   const totalExpense = expense.reduce((total, transaction) => {
+  const totalExpense = expense.reduce((total, transaction) => {
     return total + transaction.amountInput;
-  }, 0)
+  }, 0);
 
   const totalBalance = totalIncome - totalExpense;
 
-   incomefield.textContent = `+GHC ${totalIncome}`;
-   expensefield.textContent = `-GHC ${totalExpense}`;
-   balance.textContent = `GHC ${totalBalance}`;
-  
+  incomefield.textContent = `+GHC ${totalIncome}`;
+  expensefield.textContent = `-GHC ${totalExpense}`;
+  balance.textContent = `GHC ${totalBalance}`;
+  numTransactions.textContent = transactions.length;
 }
+
+
+// Load saved data when the page opens
+displayTransaction(transactions);
+updateStats();
