@@ -120,3 +120,13 @@ incomeBtn.addEventListener('click', () => {
   expenseBtn.classList.remove('active-expense')
 
 })
+
+function UpdateStats() {
+  const income = transactions.filter((transaction) => {
+    return transaction.type === 'income'
+  })
+  const expense = transactions.filter((transaction) => {
+    return transaction.type === 'expense'
+  })
+  
+}
