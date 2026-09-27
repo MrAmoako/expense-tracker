@@ -9,7 +9,10 @@ const categoryInput = document.getElementById("category");
 const dateInput = document.getElementById("date");
 const addBtn = document.getElementById("addBtn");
 const container = document.getElementById("container");
-const price = document.getElementById("price")
+const price = document.getElementById("price");
+const balance = document.getElementById("balance");
+const income = document.getElementById("income");
+const expense = document.getElementById("expense");
 
 addBtn.addEventListener("click", () => {
   const newTransaction = {
